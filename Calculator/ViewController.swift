@@ -36,14 +36,10 @@ class ViewController: UIViewController {
             display.text = String(newValue)
         }
     }
-     
+    
     @IBAction private func touchDigit(_ sender: UIButton)
     {
         let digit = sender.currentTitle!
-        if !isTyping {
-            prevDisplay = display!.text!
-        }
-        
         
         if isTyping{
             let textCurrentlyInDisplay = display!.text!
@@ -63,6 +59,10 @@ class ViewController: UIViewController {
             brain.setOperand(operand: displayValue)
             isTyping = false
         }
+        else{
+            display!.text! = String(String(displayValue).characters.dropLast())
+        }
+        
         if let operationSymbol = sender.currentTitle{
             brain.performOperation(symbol: operationSymbol)
         }
