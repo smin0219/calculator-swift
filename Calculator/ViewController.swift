@@ -19,64 +19,53 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+
+    @IBOutlet weak var display: UILabel!
     
-    // Display numbers
-    @IBOutlet private weak var display: UILabel!
+    var isTyping = false
     
-    // Let it knows whether user is typing or not
-    private var isTyping = false
+    @IBAction func digitButtons(_ sender: UIButton) {
+        
+        if(isTyping){
+            display.text = (display.text)!+sender.currentTitle!
+        }
+        else{
+            display.text = sender.currentTitle!
+        }
+        isTyping = true
+    }
     
-    private var prevDisplay = ""
-    
-    private var displayValue: Double{
+    var displayText: Double{
         get{
-            return Double(display!.text!)!
+            return Double(display.text!)!
         }
         set{
-            display.text = String(newValue)
+            display.text! = String(newValue)
         }
     }
     
-    @IBAction private func touchDigit(_ sender: UIButton)
-    {
-        let digit = sender.currentTitle!
+    private let operation: CalculatorOperation = CalculatorOperation()
+    
+    @IBAction func performOperations(_ sender: UIButton) {
         
         if isTyping{
-            let textCurrentlyInDisplay = display!.text!
-            display!.text = textCurrentlyInDisplay + digit
+            operation.setOperand(operand: displayText)
         }
-        else{
-            display!.text = digit
-            isTyping = true
-        }
-    }
-    
-    private var brain = CalculatorBrain()
-    
-    @IBAction private func performOperation(_ sender: UIButton) {
+        isTyping = false
         
-        if isTyping{
-            brain.setOperand(operand: displayValue)
-            isTyping = false
-        }
-        else{
-            display!.text! = String(String(displayValue).characters.dropLast())
+        if let mathmaticalSymbol = sender.currentTitle{
+            operation.operationHandler(symbol: mathmaticalSymbol)
         }
         
-        if let operationSymbol = sender.currentTitle{
-            brain.performOperation(symbol: operationSymbol)
-        }
-        displayValue = brain.result
+        displayText = operation.getResult
+  
         /*
-         isTyping = false
-         if operation == "←"{
-         let currDisplay = display!.text!
-         let newDisplay = currDisplay.substring(to:currDisplay.index(before: currDisplay.endIndex))
-         display!.text = newDisplay
-         }
-         else if operation == "↩︎"{
-         display!.text = prevDisplay
-         }
-         */
+        if let operationSymbol = sender.currentTitle{
+            if(operationSymbol == "π"){
+                displayText = Double.pi
+            }
+        }
+        */
     }
+    
 }
